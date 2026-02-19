@@ -1,4 +1,4 @@
-import { Zap, Network, FileCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Zap, Network, FileCheck, ArrowRight, CheckCircle2, UserCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
@@ -14,7 +14,7 @@ const evaluaciones = [
     message: 'Hola%20Karen,%20me%20interesa%20la%20valoración%20de%20TDAH%20infantil',
   },
   {
-    icon: Zap,
+    icon: UserCheck,
     title: 'Valoración TDAH Adultos',
     slug: '/evaluacion-tdah-adultos',
     edad: 'Adultos desde 18 años',

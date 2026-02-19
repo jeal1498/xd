@@ -70,10 +70,10 @@ const Hero = () => {
             <div className="flex -space-x-3">
               <div className="w-10 h-10 rounded-full bg-accent-sand border-2 border-card flex items-center justify-center text-[10px] font-bold text-primary shadow-md">KT</div>
               <div className="w-10 h-10 rounded-full bg-accent-blue border-2 border-card flex items-center justify-center shadow-md">
-                <Brain className="w-4 h-4 text-primary-foreground" />
+                <Brain className="w-4 h-4 text-primary-foreground" aria-hidden="true" />
               </div>
               <div className="w-10 h-10 rounded-full bg-accent-pink border-2 border-card flex items-center justify-center shadow-md">
-                <ShieldCheck className="w-4 h-4 text-primary-foreground" />
+                <ShieldCheck className="w-4 h-4 text-primary-foreground" aria-hidden="true" />
               </div>
             </div>
             <div>
@@ -92,7 +92,7 @@ const Hero = () => {
         >
           <div className="relative z-10 w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl border-[8px] border-card float-animation">
             <img
-              src="https://psicologakarentrujillo.com.mx/Psicologa_Karen_Trujillo.webp"
+              src="/images/psicologa-karen-trujillo.webp"
               alt="Psic. Karen Trujillo, neuropsicóloga especialista en valoración de TDAH y Autismo en Cancún, Quintana Roo"
               className="w-full h-full object-cover object-top"
               loading="eager"

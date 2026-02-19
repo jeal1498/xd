@@ -66,7 +66,11 @@ const Navbar = () => {
             onMouseEnter={() => setShowValoraciones(true)}
             onMouseLeave={() => setShowValoraciones(false)}
           >
-            <button className="flex items-center gap-1 px-5 py-2 text-xs font-bold uppercase tracking-widest text-primary/70 hover:text-primary hover:bg-secondary rounded-lg transition-all">
+            <button
+              className="flex items-center gap-1 px-5 py-2 text-xs font-bold uppercase tracking-widest text-primary/70 hover:text-primary hover:bg-secondary rounded-lg transition-all"
+              aria-haspopup="true"
+              aria-expanded={showValoraciones}
+            >
               Valoraciones <ChevronDown className={`w-3 h-3 transition-transform ${showValoraciones ? 'rotate-180' : ''}`} />
             </button>
             <AnimatePresence>

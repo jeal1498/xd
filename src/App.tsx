@@ -3,11 +3,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import TDAHNinos from "./pages/TDAHNinos";
-import TDAHAdultos from "./pages/TDAHAdultos";
-import AutismoCancun from "./pages/AutismoCancun";
+
+const TDAHNinos = lazy(() => import("./pages/TDAHNinos"));
+const TDAHAdultos = lazy(() => import("./pages/TDAHAdultos"));
+const AutismoCancun = lazy(() => import("./pages/AutismoCancun"));
 
 const queryClient = new QueryClient();
 
@@ -17,13 +19,15 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/evaluacion-tdah-ninos" element={<TDAHNinos />} />
-          <Route path="/evaluacion-tdah-adultos" element={<TDAHAdultos />} />
-          <Route path="/evaluacion-autismo-cancun" element={<AutismoCancun />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<div className="min-h-screen bg-soft-gradient" />}>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/evaluacion-tdah-ninos" element={<TDAHNinos />} />
+            <Route path="/evaluacion-tdah-adultos" element={<TDAHAdultos />} />
+            <Route path="/evaluacion-autismo-cancun" element={<AutismoCancun />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
