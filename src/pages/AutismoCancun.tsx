@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { applySeo, injectSchema } from '@/lib/seo';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, Network, CheckCircle2, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -61,22 +62,14 @@ const teaThresholds = {
 
 export default function AutismoCancun() {
   useEffect(() => {
-    document.title = 'Diagnóstico Autismo (TEA) en Cancún | Niños desde 2 años | Psic. Karen Trujillo';
-
-    let desc = document.querySelector('meta[name="description"]');
-    if (!desc) { desc = document.createElement('meta'); desc.setAttribute('name', 'description'); document.head.appendChild(desc); }
-    const prevDesc = desc.getAttribute('content');
-    desc.setAttribute('content', 'Diagnóstico de Autismo (TEA) en Cancún con ADOS-2, ADI-R y M-CHAT. Desde los 2 años. Informe con cédula 11009616 válido ante SEP, IMSS y DIF. Psic. Karen Trujillo.');
-
-    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
-    if (!canonical) { canonical = document.createElement('link') as HTMLLinkElement; canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    const prevCanonical = canonical.getAttribute('href');
-    canonical.setAttribute('href', 'https://psicologakarentrujillo.com.mx/evaluacion-autismo-cancun');
-
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.id = 'schema-autismo';
-    script.text = JSON.stringify({
+    const cleanSeo = applySeo({
+      title: 'Diagnóstico Autismo (TEA) en Cancún | Niños desde 2 años | Psic. Karen Trujillo',
+      description: 'Diagnóstico de Autismo (TEA) en Cancún con ADOS-2, ADI-R y M-CHAT. Desde los 2 años. Informe con cédula 11009616 válido ante SEP, IMSS y DIF. Psic. Karen Trujillo.',
+      canonical: 'https://psicologakarentrujillo.com.mx/evaluacion-autismo-cancun',
+      ogTitle: 'Diagnóstico Autismo (TEA) en Cancún | ADOS-2 | Psic. Karen Trujillo',
+      ogDescription: 'Evaluación TEA con ADOS-2 y ADI-R en Cancún. Desde 2 años. Informe con validez ante SEP, IMSS y DIF. Cédula federal 11009616.',
+    });
+    const cleanSchema = injectSchema('schema-autismo', {
       '@context': 'https://schema.org',
       '@type': 'MedicalWebPage',
       name: 'Diagnóstico de Autismo (TEA) en Cancún',
@@ -89,14 +82,7 @@ export default function AutismoCancun() {
         { '@type': 'ListItem', position: 2, name: 'Diagnóstico Autismo TEA', item: 'https://psicologakarentrujillo.com.mx/evaluacion-autismo-cancun' },
       ]},
     });
-    document.head.appendChild(script);
-
-    return () => {
-      document.title = 'Valoración TDAH y Autismo en Cancún | Psic. Karen Trujillo — Neuropsicóloga';
-      desc?.setAttribute('content', prevDesc || '');
-      canonical?.setAttribute('href', prevCanonical || 'https://psicologakarentrujillo.com.mx');
-      document.getElementById('schema-autismo')?.remove();
-    };
+    return () => { cleanSeo(); cleanSchema(); };
   }, []);
 
   return (

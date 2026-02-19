@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { applySeo, injectSchema } from '@/lib/seo';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, Brain, FileText, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -38,26 +39,14 @@ const symptoms = [
 
 export default function TDAHNinos() {
   useEffect(() => {
-    // Title
-    document.title = 'Valoración TDAH Infantil en Cancún | Niños 5-17 años | Psic. Karen Trujillo';
-
-    // Meta description
-    let desc = document.querySelector('meta[name="description"]');
-    if (!desc) { desc = document.createElement('meta'); desc.setAttribute('name', 'description'); document.head.appendChild(desc); }
-    const prevDesc = desc.getAttribute('content');
-    desc.setAttribute('content', 'Evaluación neuropsicológica de TDAH en niños y adolescentes (5-17 años) en Cancún. CONNERS-3, WISC-V, BRIEF-2. Informe con cédula 11009616 válido ante SEP e IMSS.');
-
-    // Canonical
-    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
-    if (!canonical) { canonical = document.createElement('link') as HTMLLinkElement; canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    const prevCanonical = canonical.getAttribute('href');
-    canonical.setAttribute('href', 'https://psicologakarentrujillo.com.mx/evaluacion-tdah-ninos');
-
-    // Schema
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.id = 'schema-tdah-ninos';
-    script.text = JSON.stringify({
+    const cleanSeo = applySeo({
+      title: 'Valoración TDAH Infantil en Cancún | Niños 5-17 años | Psic. Karen Trujillo',
+      description: 'Evaluación neuropsicológica de TDAH en niños y adolescentes (5-17 años) en Cancún. CONNERS-3, WISC-V, BRIEF-2. Informe con cédula 11009616 válido ante SEP e IMSS.',
+      canonical: 'https://psicologakarentrujillo.com.mx/evaluacion-tdah-ninos',
+      ogTitle: 'Valoración TDAH Infantil en Cancún | Psic. Karen Trujillo',
+      ogDescription: 'Diagnóstico de TDAH en niños 5-17 años. CONNERS-3, WISC-V, BRIEF-2. Informe oficial con cédula 11009616. Válido ante SEP e IMSS en Cancún.',
+    });
+    const cleanSchema = injectSchema('schema-tdah-ninos', {
       '@context': 'https://schema.org',
       '@type': 'MedicalWebPage',
       name: 'Valoración Neuropsicológica de TDAH Infantil en Cancún',
@@ -69,14 +58,7 @@ export default function TDAHNinos() {
         { '@type': 'ListItem', position: 2, name: 'Valoración TDAH Infantil', item: 'https://psicologakarentrujillo.com.mx/evaluacion-tdah-ninos' },
       ]},
     });
-    document.head.appendChild(script);
-
-    return () => {
-      document.title = 'Valoración TDAH y Autismo en Cancún | Psic. Karen Trujillo — Neuropsicóloga';
-      desc?.setAttribute('content', prevDesc || '');
-      canonical?.setAttribute('href', prevCanonical || 'https://psicologakarentrujillo.com.mx');
-      document.getElementById('schema-tdah-ninos')?.remove();
-    };
+    return () => { cleanSeo(); cleanSchema(); };
   }, []);
 
   return (

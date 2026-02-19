@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { applySeo, injectSchema } from '@/lib/seo';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, Brain } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -56,22 +57,14 @@ const adultThresholds = {
 
 export default function TDAHAdultos() {
   useEffect(() => {
-    document.title = 'Valoración TDAH en Adultos en Cancún | Diagnóstico Neuropsicológico | Psic. Karen Trujillo';
-
-    let desc = document.querySelector('meta[name="description"]');
-    if (!desc) { desc = document.createElement('meta'); desc.setAttribute('name', 'description'); document.head.appendChild(desc); }
-    const prevDesc = desc.getAttribute('content');
-    desc.setAttribute('content', 'Diagnóstico neuropsicológico de TDAH en adultos en Cancún. CAARS, DIVA 2.0, CPT-3. Muchos adultos llevan años sin diagnóstico. Informe con cédula 11009616.');
-
-    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
-    if (!canonical) { canonical = document.createElement('link') as HTMLLinkElement; canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
-    const prevCanonical = canonical.getAttribute('href');
-    canonical.setAttribute('href', 'https://psicologakarentrujillo.com.mx/evaluacion-tdah-adultos');
-
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.id = 'schema-tdah-adultos';
-    script.text = JSON.stringify({
+    const cleanSeo = applySeo({
+      title: 'Valoración TDAH en Adultos en Cancún | Diagnóstico Neuropsicológico | Psic. Karen Trujillo',
+      description: 'Diagnóstico neuropsicológico de TDAH en adultos en Cancún. CAARS, DIVA 2.0, CPT-3. Muchos adultos llevan años sin diagnóstico. Informe con cédula 11009616.',
+      canonical: 'https://psicologakarentrujillo.com.mx/evaluacion-tdah-adultos',
+      ogTitle: '¿Tienes TDAH sin diagnosticar? Valoración en Cancún | Psic. Karen Trujillo',
+      ogDescription: 'Diagnóstico de TDAH adulto en Cancún. El TDAH adulto está subdiagnosticado. Instrumentos: CAARS, DIVA 2.0, CPT-3. Cédula 11009616.',
+    });
+    const cleanSchema = injectSchema('schema-tdah-adultos', {
       '@context': 'https://schema.org',
       '@type': 'MedicalWebPage',
       name: 'Valoración de TDAH en Adultos en Cancún',
@@ -83,14 +76,7 @@ export default function TDAHAdultos() {
         { '@type': 'ListItem', position: 2, name: 'Valoración TDAH Adultos', item: 'https://psicologakarentrujillo.com.mx/evaluacion-tdah-adultos' },
       ]},
     });
-    document.head.appendChild(script);
-
-    return () => {
-      document.title = 'Valoración TDAH y Autismo en Cancún | Psic. Karen Trujillo — Neuropsicóloga';
-      desc?.setAttribute('content', prevDesc || '');
-      canonical?.setAttribute('href', prevCanonical || 'https://psicologakarentrujillo.com.mx');
-      document.getElementById('schema-tdah-adultos')?.remove();
-    };
+    return () => { cleanSeo(); cleanSchema(); };
   }, []);
 
   return (
