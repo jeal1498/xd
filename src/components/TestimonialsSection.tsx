@@ -17,10 +17,10 @@ const testimonials = [
     bgColor: 'bg-accent-pink/20',
   },
   {
-    name: 'Ana & Roberto',
-    service: 'Terapia de pareja',
+    name: 'Sofía M.',
+    service: 'Valoración TDAH Infantil',
     rating: 5,
-    review: '"Nos enseñó a comunicarnos sin lastimarnos y recuperamos la conexión que habíamos perdido. Karen entiende la complejidad de las parejas. ¡Recomendado 100%!"',
+    review: '"Por fin entendí por qué mi hijo tenía tantas dificultades en la escuela. Karen nos explicó todo con claridad y el informe nos abrió las puertas a los apoyos que necesitaba. Muy profesional y cercana."',
     bgColor: 'bg-accent-sand/20',
   },
 ];

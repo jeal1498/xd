@@ -1,21 +1,15 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ArrowLeft, Network, CheckCircle2, Shield, FileText } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Network, CheckCircle2, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingButtons from '@/components/FloatingButtons';
 import LocationSection from '@/components/LocationSection';
-
-const senalesTEA = [
-  { edad: '12-24 meses', senales: 'No señala con el dedo, no imita, pérdida de palabras que ya usaba, poco contacto visual' },
-  { edad: '2-3 años', senales: 'No habla en frases de 2 palabras, juego repetitivo, no juega "como si" (juego simbólico), angustia ante cambios de rutina' },
-  { edad: '3-6 años', senales: 'Dificultad para relacionarse con otros niños, sensibilidad extrema a sonidos o texturas, ecolalia, intereses muy restringidos' },
-  { edad: '6+ años', senales: 'Dificultad para interpretar emociones ajenas, conversaciones centradas en un solo tema, rigidez ante cambios, problemas de integración sensorial' },
-];
+import SymptomChecker from '@/components/SymptomChecker';
 
 const instrumentos = [
-  { nombre: 'ADOS-2', uso: 'Autism Diagnostic Observation Schedule. Observación estructurada de comunicación social y juego. Gold standard del diagnóstico TEA.' },
+  { nombre: 'ADOS-2', uso: 'Autism Diagnostic Observation Schedule. Observación estructurada de comunicación social y juego. Gold standard del diagnóstico TEA a nivel mundial.' },
   { nombre: 'M-CHAT-R/F', uso: 'Cuestionario de detección temprana para niños de 16 a 30 meses. Identifica señales de alerta de Autismo.' },
   { nombre: 'ADI-R', uso: 'Entrevista diagnóstica de Autismo para padres/tutores. Evalúa desarrollo temprano y síntomas actuales.' },
   { nombre: 'Vineland-3', uso: 'Escala de conducta adaptativa: habilidades de la vida diaria, comunicación y socialización.' },
@@ -32,28 +26,53 @@ const queIncluye = [
   'Sesión de devolución con orientación a padres',
 ];
 
-const faqTEA = [
-  {
-    q: '¿A partir de qué edad se puede diagnosticar el Autismo?',
-    a: 'Con instrumentos específicos como el M-CHAT-R/F se puede hacer detección temprana desde los 16 meses. El diagnóstico formal con ADOS-2 es confiable a partir de los 18-24 meses. Un diagnóstico temprano maximiza el impacto de la intervención en el desarrollo del niño.',
-  },
-  {
-    q: '¿Cuánto tiempo dura el proceso de diagnóstico de Autismo?',
-    a: 'El proceso completo de diagnóstico TEA dura entre 3 y 4 semanas, repartidas en varias sesiones: entrevista con padres (ADI-R), observación directa del niño (ADOS-2), análisis de resultados y sesión de devolución con el informe completo.',
-  },
-  {
-    q: '¿El diagnóstico de TEA cambia si el niño es "muy funcional"?',
-    a: 'El DSM-5 ya no distingue entre Asperger y Autismo: todos forman parte del Trastorno del Espectro Autista. Lo que sí determina la valoración es el nivel de apoyo necesario (Nivel 1, 2 o 3), que define el tipo de intervención y los recursos que el niño puede recibir en escuelas e instituciones.',
-  },
-  {
-    q: '¿El diagnóstico de Autismo da acceso a apoyos institucionales?',
-    a: 'Sí. Con el informe clínico respaldado por cédula federal 11009616 puedes solicitar: apoyos escolares ante la SEP, evaluación del IMSS para programas de rehabilitación, acceso a servicios del DIF y consideraciones en trámites legales o laborales. El informe especifica el nivel de apoyo requerido.',
-  },
+const symptoms = [
+  'Poco o nulo contacto visual al interactuar',
+  'No señala con el dedo para mostrar cosas (antes de los 18 meses)',
+  'Perdió palabras o habilidades que ya había adquirido',
+  'No responde a su nombre de forma consistente',
+  'Juego repetitivo o fijación en partes de objetos (ruedas, luces)',
+  'Dificultad para jugar con otros niños o hacer juego simbólico',
+  'Reacciones extremas ante sonidos, texturas o cambios de rutina',
+  'Repite frases de videos o canciones fuera de contexto (ecolalia)',
+  'Muy poco interés en compartir experiencias o emociones con otros',
+  'Intereses muy intensos y restringidos a uno o pocos temas',
 ];
+
+const teaThresholds = {
+  low: {
+    max: 2,
+    label: 'Pocas señales identificadas',
+    description: 'Marcaste pocas señales. Algunos de estos comportamientos son parte del desarrollo típico en ciertas etapas. Si persisten o te generan dudas, una consulta puede darte tranquilidad.',
+    color: 'border-success bg-success/5',
+  },
+  mid: {
+    max: 5,
+    label: 'Hay señales que merecen atención',
+    description: 'Varias de estas señales presentes de forma consistente pueden indicar que vale la pena hacer una valoración formal. La detección temprana marca una diferencia enorme en el desarrollo.',
+    color: 'border-accent-blue bg-accent-blue/5',
+  },
+  high: {
+    label: 'Se recomienda una evaluación formal',
+    description: 'Muchas de estas señales presentes de forma persistente son motivo suficiente para solicitar una valoración neuropsicológica. Cuanto antes se evalúa, antes puede comenzar la intervención adecuada.',
+    color: 'border-primary bg-primary/5',
+  },
+};
 
 export default function AutismoCancun() {
   useEffect(() => {
     document.title = 'Diagnóstico Autismo (TEA) en Cancún | Niños desde 2 años | Psic. Karen Trujillo';
+
+    let desc = document.querySelector('meta[name="description"]');
+    if (!desc) { desc = document.createElement('meta'); desc.setAttribute('name', 'description'); document.head.appendChild(desc); }
+    const prevDesc = desc.getAttribute('content');
+    desc.setAttribute('content', 'Diagnóstico de Autismo (TEA) en Cancún con ADOS-2, ADI-R y M-CHAT. Desde los 2 años. Informe con cédula 11009616 válido ante SEP, IMSS y DIF. Psic. Karen Trujillo.');
+
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+    if (!canonical) { canonical = document.createElement('link') as HTMLLinkElement; canonical.setAttribute('rel', 'canonical'); document.head.appendChild(canonical); }
+    const prevCanonical = canonical.getAttribute('href');
+    canonical.setAttribute('href', 'https://psicologakarentrujillo.com.mx/evaluacion-autismo-cancun');
+
     const script = document.createElement('script');
     script.type = 'application/ld+json';
     script.id = 'schema-autismo';
@@ -62,32 +81,22 @@ export default function AutismoCancun() {
       '@type': 'MedicalWebPage',
       name: 'Diagnóstico de Autismo (TEA) en Cancún',
       url: 'https://psicologakarentrujillo.com.mx/evaluacion-autismo-cancun',
-      about: {
-        '@type': 'MedicalCondition',
-        name: 'Trastorno del Espectro Autista (TEA)',
-        code: { '@type': 'MedicalCode', code: 'F84.0', codingSystem: 'ICD-10' },
-      },
-      reviewedBy: {
-        '@type': 'Physician',
-        name: 'Karen Trujillo',
-        hasCredential: { '@type': 'EducationalOccupationalCredential', credentialId: '11009616' },
-      },
-      offers: {
-        '@type': 'Offer',
-        name: 'Diagnóstico TEA con ADOS-2',
-        areaServed: { '@type': 'City', name: 'Cancún' },
-        priceCurrency: 'MXN',
-      },
-      breadcrumb: {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://psicologakarentrujillo.com.mx' },
-          { '@type': 'ListItem', position: 2, name: 'Diagnóstico Autismo TEA', item: 'https://psicologakarentrujillo.com.mx/evaluacion-autismo-cancun' },
-        ],
-      },
+      about: { '@type': 'MedicalCondition', name: 'Trastorno del Espectro Autista (TEA)', code: { '@type': 'MedicalCode', code: 'F84.0', codingSystem: 'ICD-10' } },
+      reviewedBy: { '@type': 'Physician', name: 'Karen Trujillo', hasCredential: { '@type': 'EducationalOccupationalCredential', credentialId: '11009616' } },
+      offers: { '@type': 'Offer', name: 'Diagnóstico TEA con ADOS-2', areaServed: { '@type': 'City', name: 'Cancún' }, priceCurrency: 'MXN' },
+      breadcrumb: { '@type': 'BreadcrumbList', itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://psicologakarentrujillo.com.mx' },
+        { '@type': 'ListItem', position: 2, name: 'Diagnóstico Autismo TEA', item: 'https://psicologakarentrujillo.com.mx/evaluacion-autismo-cancun' },
+      ]},
     });
     document.head.appendChild(script);
-    return () => { const s = document.getElementById('schema-autismo'); if (s) s.remove(); };
+
+    return () => {
+      document.title = 'Valoración TDAH y Autismo en Cancún | Psic. Karen Trujillo — Neuropsicóloga';
+      desc?.setAttribute('content', prevDesc || '');
+      canonical?.setAttribute('href', prevCanonical || 'https://psicologakarentrujillo.com.mx');
+      document.getElementById('schema-autismo')?.remove();
+    };
   }, []);
 
   return (
@@ -105,12 +114,10 @@ export default function AutismoCancun() {
                 <li className="text-primary font-medium">Diagnóstico Autismo (TEA)</li>
               </ol>
             </nav>
-
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-card rounded-full border border-border shadow-sm mb-6">
               <Network className="w-3 h-3 text-primary" />
               <span className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Niños desde 2 años · Cancún &amp; Online (parcial)</span>
             </div>
-
             <motion.header initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
               <h1 className="text-5xl lg:text-6xl font-serif font-bold text-primary leading-[1.1] mb-6">
                 Diagnóstico de Autismo<br />
@@ -119,22 +126,15 @@ export default function AutismoCancun() {
               <p className="text-muted-foreground text-lg font-light leading-relaxed max-w-2xl mx-auto mb-4">
                 Evaluación con ADOS-2 y ADI-R — los instrumentos gold standard del diagnóstico TEA. Informe clínico con cédula federal 11009616 válido ante SEP, IMSS y DIF.
               </p>
-              <p className="text-muted-foreground text-base font-light mb-8">
-                Un diagnóstico temprano puede marcar la diferencia en el desarrollo de tu hijo.
-              </p>
+              <p className="text-muted-foreground text-sm font-light mb-8">Un diagnóstico temprano puede marcar la diferencia en el desarrollo de tu hijo.</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="https://wa.me/529983211547?text=Hola%20Karen,%20me%20interesa%20el%20diagnóstico%20de%20Autismo%20para%20mi%20hijo"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-gradient-primary hover:opacity-90 text-primary-foreground py-4 px-10 rounded-lg font-bold text-xs shadow-xl shadow-primary/25 hover:shadow-2xl hover:-translate-y-1 transition-all uppercase tracking-widest"
-                >
+                <a href="https://wa.me/529983211547?text=Hola%20Karen,%20me%20interesa%20el%20diagnóstico%20de%20Autismo%20para%20mi%20hijo"
+                  target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-gradient-primary hover:opacity-90 text-primary-foreground py-4 px-10 rounded-lg font-bold text-xs shadow-xl shadow-primary/25 hover:shadow-2xl hover:-translate-y-1 transition-all uppercase tracking-widest">
                   Agendar diagnóstico TEA <ArrowRight className="w-4 h-4" />
                 </a>
-                <Link
-                  to="/"
-                  className="bg-card text-primary border-2 border-primary py-4 px-8 rounded-lg font-bold text-xs hover:bg-primary hover:text-primary-foreground transition-all uppercase tracking-widest shadow-sm flex items-center justify-center gap-2"
-                >
+                <Link to="/"
+                  className="bg-card text-primary border-2 border-primary py-4 px-8 rounded-lg font-bold text-xs hover:bg-primary hover:text-primary-foreground transition-all uppercase tracking-widest shadow-sm flex items-center justify-center gap-2">
                   <ArrowLeft className="w-4 h-4" /> Volver al inicio
                 </Link>
               </div>
@@ -142,43 +142,38 @@ export default function AutismoCancun() {
           </div>
         </section>
 
-        {/* Señales por edad */}
+        {/* SymptomChecker */}
         <section className="py-24 px-6 bg-card">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <h2 className="text-3xl md:text-4xl font-serif font-bold text-primary mb-4">
-                Señales de Autismo por rango de edad
+                ¿Observas alguna de estas señales en tu hijo?
               </h2>
-              <p className="text-muted-foreground font-light mb-10 max-w-3xl">
-                El Autismo se manifiesta diferente según la edad y el perfil del niño. Estas son las señales que justifican solicitar una evaluación formal:
+              <p className="text-muted-foreground font-light mb-10 max-w-2xl">
+                El Autismo tiene un espectro amplio — cada niño lo expresa diferente. Estas son las señales más frecuentes. Selecciona las que reconozcas en tu hijo de forma consistente.
               </p>
-              <div className="space-y-4 mb-10">
-                {senalesTEA.map((item) => (
-                  <article key={item.edad} className="flex gap-4 p-6 bg-secondary rounded-xl border border-border">
-                    <span className="shrink-0 px-3 py-1 bg-accent-pink/20 text-primary text-xs font-bold rounded-full h-fit">{item.edad}</span>
-                    <p className="text-sm text-foreground">{item.senales}</p>
-                  </article>
-                ))}
-              </div>
-              <div className="p-6 bg-accent-pink/10 border-l-4 border-accent-pink rounded-lg">
-                <p className="text-sm leading-relaxed text-foreground">
-                  <strong>Importante:</strong> La presencia de algunas de estas señales no confirma el diagnóstico. El TEA tiene un espectro amplio y cada niño lo expresa de manera diferente. Solo una evaluación clínica formal con instrumentos estandarizados puede establecer un diagnóstico preciso.
+              <SymptomChecker
+                title="Test de señales de Autismo (TEA)"
+                subtitle="Marca las conductas que observas de forma frecuente — no solo en momentos de cansancio o estrés puntual."
+                symptoms={symptoms}
+                waMessage="Hola%20Karen,%20hice%20el%20test%20de%20señales%20de%20Autismo%20y%20me%20gustaría%20hablar%20sobre%20los%20resultados"
+                thresholds={teaThresholds}
+              />
+              <div className="mt-6 p-5 bg-accent-pink/5 border border-accent-pink/20 rounded-xl">
+                <p className="text-sm text-foreground">
+                  <strong>Importante:</strong> La presencia de estas señales no confirma el diagnóstico. El TEA tiene un espectro amplio y solo una evaluación clínica formal con instrumentos estandarizados puede establecer un diagnóstico preciso.
                 </p>
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* Por qué el ADOS-2 importa */}
+        {/* Instrumentos */}
         <section className="py-24 px-6 bg-secondary">
           <div className="max-w-5xl mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <h2 className="text-3xl md:text-4xl font-serif font-bold text-primary mb-4">
-                ¿Por qué importa el instrumento que usa el evaluador?
-              </h2>
-              <p className="text-muted-foreground font-light mb-10 max-w-3xl">
-                No todos los diagnósticos de Autismo son equivalentes. La calidad del diagnóstico depende directamente de los instrumentos utilizados y de la formación del evaluador.
-              </p>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold text-primary mb-4">¿Por qué importa el instrumento que usa el evaluador?</h2>
+              <p className="text-muted-foreground font-light mb-10 max-w-3xl">No todos los diagnósticos de Autismo son equivalentes. La calidad del diagnóstico depende directamente de los instrumentos utilizados.</p>
               <div className="grid sm:grid-cols-2 gap-4">
                 {instrumentos.map((inst) => (
                   <article key={inst.nombre} className="bg-card p-6 rounded-xl border border-border hover:border-accent-pink transition-colors">
@@ -200,10 +195,8 @@ export default function AutismoCancun() {
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <div className="text-center mb-10">
                 <Shield className="w-12 h-12 text-accent-blue mx-auto mb-4" />
-                <h2 className="text-3xl md:text-4xl font-serif font-bold italic mb-4">
-                  ¿Qué obtienes con el diagnóstico?
-                </h2>
-                <p className="text-primary-foreground/80 font-light">Un diagnóstico de TEA con cédula federal abre puertas reales a apoyos institucionales.</p>
+                <h2 className="text-3xl md:text-4xl font-serif font-bold italic mb-4">¿Qué obtienes con el diagnóstico?</h2>
+                <p className="text-primary-foreground/80 font-light">Un diagnóstico TEA con cédula federal abre puertas reales a apoyos institucionales.</p>
               </div>
               <div className="grid sm:grid-cols-2 gap-4 mb-10">
                 {queIncluye.map((item) => (
@@ -214,12 +207,9 @@ export default function AutismoCancun() {
                 ))}
               </div>
               <div className="text-center">
-                <a
-                  href="https://wa.me/529983211547?text=Hola%20Karen,%20quiero%20agendar%20el%20diagnóstico%20de%20Autismo%20para%20mi%20hijo"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-primary-foreground text-primary font-bold text-xs uppercase tracking-widest px-10 py-4 rounded-lg hover:opacity-90 transition-all shadow-lg"
-                >
+                <a href="https://wa.me/529983211547?text=Hola%20Karen,%20quiero%20agendar%20el%20diagnóstico%20de%20Autismo%20para%20mi%20hijo"
+                  target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-primary-foreground text-primary font-bold text-xs uppercase tracking-widest px-10 py-4 rounded-lg hover:opacity-90 transition-all shadow-lg">
                   Agendar diagnóstico TEA <ArrowRight className="w-4 h-4" />
                 </a>
               </div>
@@ -227,27 +217,8 @@ export default function AutismoCancun() {
           </div>
         </section>
 
-        {/* FAQ TEA */}
-        <section className="py-24 px-6 bg-card">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-primary mb-12 text-center">Preguntas frecuentes sobre el diagnóstico de Autismo</h2>
-            <div className="space-y-4">
-              {faqTEA.map((faq, i) => (
-                <details key={i} className="group bg-secondary border-2 border-border hover:border-accent-pink rounded-lg transition-all open:border-primary open:shadow-lg">
-                  <summary className="p-6 font-bold text-primary cursor-pointer list-none flex justify-between items-center">
-                    {faq.q}
-                    <span className="text-muted-foreground group-open:rotate-45 transition-transform text-xl leading-none">+</span>
-                  </summary>
-                  <p className="px-6 pb-6 text-muted-foreground text-sm font-light leading-relaxed">{faq.a}</p>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
-
         <LocationSection />
 
-        {/* Links */}
         <section className="py-16 px-6 bg-secondary">
           <div className="max-w-5xl mx-auto text-center">
             <h2 className="text-2xl font-serif font-bold text-primary mb-8">Otras valoraciones disponibles</h2>

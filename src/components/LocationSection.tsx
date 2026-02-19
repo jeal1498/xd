@@ -28,7 +28,11 @@ const LocationSection = () => {
                 </div>
                 <div>
                   <p className="text-sm font-bold text-primary mb-1">Dirección</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">SM200 M49 L2, Hacienda de Chinconcuac, Circuito casa 1587B, 77539 Cancún, Quintana Roo, México.</p>
+                  <address className="text-xs text-muted-foreground leading-relaxed not-italic">
+                    SM200 M49 L2, Hacienda de Chinconcuac,<br />
+                    Circuito casa 1587B, C.P. 77539<br />
+                    Cancún, Quintana Roo, México.
+                  </address>
                 </div>
               </div>
 
